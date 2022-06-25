@@ -1,0 +1,20 @@
+export default defaultConfig = {
+  tags: [
+    { icon: 'bus', label: 'Transportation' },
+    { icon: 'water-outline', label: 'Water' },
+    { icon: 'transmission-tower', label: 'Electricity' },
+    { icon: 'cellphone-charging', label: 'Mobile' },
+    { icon: 'cart-variant', label: 'Household' },
+    { icon: 'piggy-bank-outline', label: 'Investment' },
+    { icon: 'bank-outline', label: 'Insurance' },
+    { icon: 'wifi-arrow-up-down', label: 'Internet' },
+    { icon: 'charity', label: 'Donation' },
+    { icon: 'airport', label: 'Travel' },
+    { icon: 'medical-bag', label: 'Health' },
+    { icon: 'chef-hat', label: 'Food' },
+    { icon: 'baby-bottle-outline', label: 'Baby Food' },
+    { icon: 'baby-face-outline', label: 'Baby Stuff' },
+    { icon: 'book-education-outline', label: 'Education' },
+    { icon: 'currency-php', label: 'Miscellaneous' },
+  ],
+}
