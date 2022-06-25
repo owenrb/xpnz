@@ -58,8 +58,10 @@ const InputScreen = props => {
   const handleSubmit = async values => {
     console.log({ values })
     dispatch(await addEntry(values))
-    navigation.navigate('Transactions')
+    if (!addAgain) navigation.navigate('Transactions')
   }
+
+  const [addAgain, setAddAgain] = useState(false)
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
@@ -79,11 +81,17 @@ const InputScreen = props => {
             category: Yup.string().required('Category is required'),
             amount: Yup.number().required().moreThan(0, 'Please entery amount'),
           })}
-          onSubmit={values => handleSubmit(values)}>
+          onSubmit={(values, formikBag) => {
+            handleSubmit(values)
+
+            const { resetForm } = formikBag
+            resetForm()
+          }}>
           {({
             handleChange,
             handleBlur,
             handleSubmit,
+            isValid,
             values,
             touched,
             errors,
@@ -112,7 +120,6 @@ const InputScreen = props => {
                   date={moment(values.date, 'YYYY-MM-DD').toDate()}
                   onConfirm={date => {
                     setOpen(false)
-                    setDate(date)
                     handleChange('date')(moment(date).format('YYYY-MM-DD'))
                   }}
                   onCancel={() => {
@@ -175,7 +182,20 @@ const InputScreen = props => {
                 </Portal>
               </View>
               <View style={styles.row}>
-                <Button onPress={handleSubmit}>Save</Button>
+                <Button
+                  onPress={x => {
+                    setAddAgain(false)
+                    handleSubmit(x)
+                  }}>
+                  Save
+                </Button>
+                <Button
+                  onPress={x => {
+                    setAddAgain(true)
+                    handleSubmit(x)
+                  }}>
+                  Save +
+                </Button>
               </View>
             </>
           )}

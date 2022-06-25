@@ -4,7 +4,6 @@ import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { Input, Button } from '@rneui/base'
-import Toast from 'react-native-toast-message'
 import { loginUser } from '../store/actions/index'
 import { showToast } from '../utils/tools'
 
