@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { StyleSheet, FlatList } from 'react-native'
-import { Modal, Portal, Chip } from 'react-native-paper'
+import { Modal, Portal, Chip, Text } from 'react-native-paper'
 import {
   categoryMap,
   categoryArray as dataSource,
@@ -15,11 +15,14 @@ const CategoryModal = ({ visible, hideModal, setTag }) => {
 
   const renderItem = ({ item }) => {
     const style = item.style || {}
+    const textStyle = item.textStyle || {}
     const chipStyle = { ...styles.chip, ...style }
     return (
       <Chip
+        mode="outlined"
         icon={item.icon}
         style={chipStyle}
+        textStyle={textStyle}
         onPress={() => onSelectCategory(item)}>
         {item.key}
       </Chip>

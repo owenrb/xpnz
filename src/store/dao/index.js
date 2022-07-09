@@ -20,7 +20,7 @@ const createJournal = async data => {
 
   const updated = JSON.stringify(obj)
 
-  //await AsyncStorage.setItem(label, updated)
+  await AsyncStorage.setItem(label, updated)
 
   return obj
 }

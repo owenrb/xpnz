@@ -4,7 +4,7 @@ import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { Input, Button } from '@rneui/base'
-import { loginUser } from '../store/actions/index'
+import { loginUser, getEntries } from '../store/actions/index'
 import { showToast } from '../utils/tools'
 
 const AuthScreen = () => {
@@ -17,6 +17,8 @@ const AuthScreen = () => {
     setLoading(true)
     console.log('handle-submit')
     dispatch(await loginUser(values))
+
+    dispatch(await getEntries())
   }
 
   useEffect(() => {
