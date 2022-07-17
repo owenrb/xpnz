@@ -29,3 +29,9 @@ export const showToast = (type, text1, text2) => {
       null
   }
 }
+
+export const currencyFormat = (numStr, symbol) => {
+  const num = parseFloat(numStr)
+  sym = symbol || ''
+  return sym + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
