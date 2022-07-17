@@ -8,7 +8,6 @@ import {
 
 const CategoryModal = ({ visible, hideModal, setTag }) => {
   const onSelectCategory = categoryItem => {
-    console.log({ categoryItem })
     setTag(categoryItem.key)
     hideModal()
   }

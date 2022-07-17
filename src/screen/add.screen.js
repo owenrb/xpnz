@@ -15,7 +15,6 @@ import { categoryMap } from '../config/categories.config'
 import { addEntry } from '../store/actions'
 
 const InputScreen = props => {
-  console.log({ props })
   const { navigation } = props
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
@@ -27,7 +26,6 @@ const InputScreen = props => {
         const user = JSON.parse(value)
 
         const arr = user.profile.tags
-        console.log({ arr })
         setCategories(arr)
       }
     } catch (uee) {

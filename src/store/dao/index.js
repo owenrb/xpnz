@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import moment from 'moment'
+import uuid from 'react-uuid'
 
 /**
  *
@@ -16,6 +17,7 @@ const createJournal = async data => {
 
   const obj = JSON.parse(value)
 
+  data.id = uuid()
   obj.entries.push(data)
 
   const updated = JSON.stringify(obj)

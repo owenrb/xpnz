@@ -11,6 +11,18 @@ const categoryMap = {
       color: 'green',
     },
   },
+  allowance: {
+    icon: 'briefcase-clock-outline',
+    label: 'Allowance',
+    style: {
+      borderColor: 'goldenrod',
+      borderWidth: 2,
+      borderRadius: 9,
+    },
+    textStyle: {
+      color: 'purple',
+    },
+  },
   water: {
     icon: 'water-outline',
     label: 'Water',
@@ -177,6 +189,18 @@ const categoryMap = {
     },
     textStyle: {
       color: 'slateblue',
+    },
+  },
+  pet: {
+    icon: 'cat',
+    label: 'Pets',
+    style: {
+      borderColor: 'brown',
+      borderWidth: 2,
+      borderRadius: 9,
+    },
+    textStyle: {
+      color: 'indianred',
     },
   },
   misc: {

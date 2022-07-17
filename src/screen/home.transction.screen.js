@@ -45,6 +45,8 @@ const Headline = ({ income, expense }) => {
 }
 
 const TransactionScreen = txnScreen => {
+  console.log({ txnScreen })
+
   const dispatch = useDispatch()
   const journal = useSelector(state => state.journal)
 
@@ -143,6 +145,8 @@ const TransactionScreen = txnScreen => {
 const styles = StyleSheet.create({
   headline: {
     flexDirection: 'row',
+    marginTop: 3,
+    marginLeft: 2,
   },
   headlineColumn: {
     width: '32%',
