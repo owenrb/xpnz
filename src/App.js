@@ -23,6 +23,7 @@ import ButtonPrevNext from './component/button-prev-next'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { getEntries } from './store/actions'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -65,8 +66,8 @@ function App(props) {
           <Tab.Navigator>
             <Tab.Screen
               name="Home"
+              icon="home"
               component={HomeScreen}
-              initialParams={{ MONTH: 'XXXX' }}
               options={{
                 headerTitle: props => (
                   <ButtonPrevNext
@@ -75,10 +76,42 @@ function App(props) {
                     onRightPress={() => onRightPress(month)}
                   />
                 ),
+                tabBarIcon: ({ color, size }) => (
+                  <MaterialCommunityIcons
+                    name="home"
+                    color={color}
+                    size={size}
+                  />
+                ),
               }}
             />
-            <Tab.Screen name="Input" label="+" component={InputScreen} />
-            <Tab.Screen name="Settings" component={SettingScreen} />
+            <Tab.Screen
+              name="Input"
+              label="+"
+              component={InputScreen}
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <MaterialCommunityIcons
+                    name="calendar-plus"
+                    color={color}
+                    size={size}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Settings"
+              component={SettingScreen}
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <MaterialCommunityIcons
+                    name="cog"
+                    color={color}
+                    size={size}
+                  />
+                ),
+              }}
+            />
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
