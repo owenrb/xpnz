@@ -1,12 +1,23 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Animated,
+  TouchableOpacity,
+} from 'react-native'
 import { categoryMap } from '../config/categories.config'
 import { Chip } from 'react-native-paper'
 import { DATE_FORMAT, DATE_DIVIDER } from '../config/constants'
 import moment from 'moment'
 import { currencyFormat } from '../utils/tools'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
+import { Avatar } from 'react-native-paper'
 
-export default TransactionItem = ({ item, index }) => {
+const SCREEN_WIDTH = Dimensions.get('window').width
+
+export default TransactionItem = ({ item, index, handleDelete }) => {
   const { amount, category, date, description, income } = item
 
   if (category === DATE_DIVIDER) {
@@ -19,26 +30,43 @@ export default TransactionItem = ({ item, index }) => {
 
   const parsed = moment(date, DATE_FORMAT)
   const { icon, textStyle, style, label } = categoryMap[category]
-  console.log({ item })
+  //console.log({ item })
+
+  const leftSwipe = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    })
+    return (
+      <TouchableOpacity onPress={handleDelete} activeOpacity={0.6}>
+        <View style={styles.deleteBox}>
+          <Avatar.Icon size={32} color="white" icon="trash-can-outline" />
+        </View>
+      </TouchableOpacity>
+    )
+  }
 
   // <Text>{moment().format('DD (ddd)')}</Text>
   return (
-    <View style={styles.contentContainer}>
-      <Chip
-        icon={icon}
-        style={{ ...style, width: '40%' }}
-        textStyle={textStyle}>
-        <Text style={textStyle}>{label}</Text>
-      </Chip>
-      <View style={{ width: '35%' }}>
-        <Text>{description}</Text>
-      </View>
-      <View style={styles.amountColumn}>
-        <View style={styles.currencyContainer}>
-          <Text style={styles.amount}>{currencyFormat(amount)}</Text>
+    <Swipeable renderLeftActions={leftSwipe}>
+      <View style={styles.contentContainer}>
+        <Chip
+          icon={icon}
+          style={{ ...style, width: '40%' }}
+          textStyle={textStyle}>
+          <Text style={textStyle}>{label}</Text>
+        </Chip>
+        <View style={{ width: '35%' }}>
+          <Text>{description}</Text>
+        </View>
+        <View style={styles.amountColumn}>
+          <View style={styles.currencyContainer}>
+            <Text style={styles.amount}>{currencyFormat(amount)}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </Swipeable>
   )
 }
 
@@ -69,5 +97,13 @@ const styles = StyleSheet.create({
     padding: 3,
     marginTop: 3,
     marginBottom: 1,
+  },
+  deleteBox: {
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 3,
+    borderRadius: 5,
+    paddingLeft: 2,
   },
 })

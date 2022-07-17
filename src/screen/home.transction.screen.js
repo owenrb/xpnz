@@ -93,10 +93,25 @@ const TransactionScreen = txnScreen => {
     setEntries(arr)
   }, [journal])
 
+  const deleteItem = id => {
+    console.log({ id })
+  }
+
   return (
     <SafeAreaView>
       <Headline expense={expense} income={income} />
-      <FlatList data={entries} renderItem={TransactionItem} />
+      <FlatList
+        data={entries}
+        renderItem={({ item, index }) => {
+          return (
+            <TransactionItem
+              item={item}
+              index={index}
+              handleDelete={() => deleteItem(item.id)}
+            />
+          )
+        }}
+      />
     </SafeAreaView>
   )
 }
