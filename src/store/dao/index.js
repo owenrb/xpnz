@@ -34,4 +34,22 @@ const getJournal = async label => {
   return JSON.parse(value)
 }
 
-export { createJournal, getJournal }
+const removeJournal = async (label, id) => {
+  const journal = await getJournal(label)
+
+  const { entries } = journal
+
+  console.log({ entries })
+
+  const filtered = entries.filter(item => item.id !== id)
+
+  console.log({ filtered })
+
+  journal.entries = filtered
+  const updated = JSON.stringify(journal)
+  await AsyncStorage.setItem(label, updated)
+
+  return journal
+}
+
+export { createJournal, getJournal, removeJournal }

@@ -10,6 +10,7 @@ import {
   PESO_SYMBOL,
 } from '../config/constants'
 import { currencyFormat } from '../utils/tools'
+import { deleteEntry } from '../store/actions'
 
 const Headline = ({ income, expense }) => {
   const savings = income - expense
@@ -93,8 +94,10 @@ const TransactionScreen = txnScreen => {
     setEntries(arr)
   }, [journal])
 
-  const deleteItem = id => {
-    console.log({ id })
+  const deleteItem = async item => {
+    const { id, date } = item
+
+    dispatch(await deleteEntry(id, moment(date, DATE_FORMAT).toDate()))
   }
 
   return (
@@ -107,7 +110,7 @@ const TransactionScreen = txnScreen => {
             <TransactionItem
               item={item}
               index={index}
-              handleDelete={() => deleteItem(item.id)}
+              handleDelete={() => deleteItem(item)}
             />
           )
         }}

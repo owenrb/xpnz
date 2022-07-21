@@ -3,16 +3,28 @@ import { StyleSheet, ScrollView, View } from 'react-native'
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { Input, Button } from '@rneui/base'
+import { Input } from '@rneui/base'
 import { Switch, Text } from '@rneui/themed'
 import DatePicker from 'react-native-date-picker'
 import { Calculator } from 'react-native-calculator'
-import { Modal, Portal, Chip } from 'react-native-paper'
+import {
+  Modal,
+  Portal,
+  Chip,
+  DarkTheme,
+  DefaultTheme,
+  Provider,
+  Surface,
+  ThemeProvider,
+  Button,
+} from 'react-native-paper'
 import CategoryModal from '../component/categoryModal'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import moment from 'moment'
 import { categoryMap } from '../config/categories.config'
 import { addEntry } from '../store/actions'
+import DropDown from 'react-native-paper-dropdown'
+import { monthList } from '../config/repeat.config'
 
 const InputScreen = props => {
   const { navigation } = props
@@ -56,21 +68,27 @@ const InputScreen = props => {
   const handleSubmit = async values => {
     console.log({ values })
     dispatch(await addEntry(values))
-    if (!addAgain) navigation.navigate('Transactions')
+    if (!addAgain) navigation.navigate('Journal')
   }
+
+  // repeat
+  const [showDropDown, setShowDropDown] = useState(false)
 
   const [addAgain, setAddAgain] = useState(false)
 
+  //<ScrollView contentContainerStyle={styles.contentContainer}>
+
   return (
-    <ScrollView contentContainerStyle={styles.contentContainer}>
+    <Provider theme={DefaultTheme}>
       <View style={styles.container}>
         <Formik
           initialValues={{
             income: 'false',
             date: moment().format('YYYY-MM-DD'),
             description: '',
-            category: 'transpo',
+            category: 'misc',
             amount: '0.00',
+            repeat: '0',
           }}
           validationSchema={Yup.object({
             income: Yup.boolean(),
@@ -78,6 +96,7 @@ const InputScreen = props => {
             description: Yup.string(),
             category: Yup.string().required('Category is required'),
             amount: Yup.number().required().moreThan(0, 'Please entery amount'),
+            repeat: Yup.number().required(),
           })}
           onSubmit={(values, formikBag) => {
             handleSubmit(values)
@@ -180,7 +199,21 @@ const InputScreen = props => {
                 </Portal>
               </View>
               <View style={styles.row}>
+                <DropDown
+                  label={'Repeat'}
+                  visible={showDropDown}
+                  showDropDown={() => setShowDropDown(true)}
+                  onDismiss={() => setShowDropDown(false)}
+                  value={values.repeat}
+                  setValue={handleChange('repeat')}
+                  list={monthList}
+                  dropDownStyle={{ marginTop: -20 }}
+                />
+              </View>
+              <View style={styles.row}>
                 <Button
+                  mode="contained"
+                  style={styles.saveButtons}
                   onPress={x => {
                     setAddAgain(false)
                     handleSubmit(x)
@@ -188,6 +221,8 @@ const InputScreen = props => {
                   Save
                 </Button>
                 <Button
+                  mode="contained"
+                  style={styles.saveButtons}
                   onPress={x => {
                     setAddAgain(true)
                     handleSubmit(x)
@@ -199,7 +234,7 @@ const InputScreen = props => {
           )}
         </Formik>
       </View>
-    </ScrollView>
+    </Provider>
   )
 }
 
@@ -237,6 +272,7 @@ const styles = StyleSheet.create({
     marginVertical: 80,
     backgroundColor: 'white',
   },
+  saveButtons: { margin: 5, width: 100, borderRadius: 9 },
 })
 
 export default InputScreen

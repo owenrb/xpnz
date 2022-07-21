@@ -1,68 +1,100 @@
-import React from 'react'
-import { Button, Text, View } from 'react-native'
-import { Calendar } from 'react-native-calendars'
-import moment from 'moment'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
+import { Chip } from 'react-native-paper'
+import { categoryMap } from '../config/categories.config'
+import { currencyFormat } from '../utils/tools'
+import { PESO_SYMBOL } from '../config/constants'
 
 const OverviewScreen = () => {
-  return (
-    <View>
-      <Text>Here's your summary</Text>
+  const dispatch = useDispatch()
+  const journal = useSelector(state => state.journal)
 
-      <Calendar
-        // Initially visible month. Default = now
-        current={moment().format('YYYY-MM-DD')}
-        // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-        minDate={'2012-05-10'}
-        // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-        //maxDate={'2012-05-30'}
-        // Handler which gets executed on day press. Default = undefined
-        onDayPress={day => {
-          console.log('selected day', day)
+  const [entries, setEntries] = useState([])
+  const [max, setMax] = useState(0.0)
+  const [total, setTotal] = useState(0.0)
+
+  const printPerc = value => {
+    const perc = (value / max) * 30 + 65
+
+    // return perc + '%'
+    return perc.toFixed(2) + '%'
+  }
+
+  const printPiePerc = value => {
+    const perc = (value / total) * 100
+
+    // return perc + '%'
+    return perc.toFixed(1) + '%'
+  }
+
+  useEffect(() => {
+    const map = new Object()
+    let maxVal = 0.0
+    let totalVal = 0.0
+
+    journal.entries.forEach(item => {
+      const { category, amount, income } = item
+      const value = parseFloat(amount)
+
+      if (income !== 'false') return
+
+      totalVal += value
+      if (maxVal < value) maxVal = value
+
+      if (category in map) {
+        map[category] += value
+      } else {
+        map[category] = value
+      }
+    })
+
+    setMax(maxVal)
+    setTotal(totalVal)
+
+    const summary = Object.entries(map)
+      .map(([k, v]) => ({
+        category: [k],
+        amount: v,
+      }))
+      .sort((a, b) => b.amount - a.amount)
+
+    setEntries(summary)
+  }, [journal])
+
+  return (
+    <SafeAreaView>
+      <Text style={styles.summaryChip}>Monthly Expense Summary</Text>
+
+      <FlatList
+        data={entries}
+        renderItem={({ item, index }) => {
+          const { category, amount } = item
+          const { icon, textStyle, style, label } = categoryMap[category]
+          return (
+            <Chip
+              icon={icon}
+              mode="outlined"
+              style={{
+                ...style,
+                ...styles.summaryChip,
+                width: printPerc(amount),
+              }}
+              textStyle={textStyle}>
+              <Text style={textStyle}>
+                {label}: {currencyFormat(amount, PESO_SYMBOL)} (
+                {printPiePerc(amount)})
+              </Text>
+            </Chip>
+          )
         }}
-        // Handler which gets executed on day long press. Default = undefined
-        onDayLongPress={day => {
-          console.log('selected day', day)
-        }}
-        // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
-        monthFormat={'yyyy MM'}
-        // Handler which gets executed when visible month changes in calendar. Default = undefined
-        onMonthChange={month => {
-          console.log('month changed', month)
-        }}
-        // Hide month navigation arrows. Default = false
-        hideArrows={true}
-        // Replace default arrows with custom ones (direction can be 'left' or 'right')
-        renderArrow={direction => <Arrow />}
-        // Do not show days of other months in month page. Default = false
-        hideExtraDays={true}
-        // If hideArrows = false and hideExtraDays = false do not switch month when tapping on greyed out
-        // day from another month that is visible in calendar page. Default = false
-        disableMonthChange={true}
-        // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday
-        firstDay={7}
-        // Hide day names. Default = false
-        // hideDayNames={true}
-        // Show week numbers to the left. Default = false
-        // showWeekNumbers={true}
-        // Handler which gets executed when press arrow icon left. It receive a callback can go back month
-        onPressArrowLeft={subtractMonth => subtractMonth()}
-        // Handler which gets executed when press arrow icon right. It receive a callback can go next month
-        onPressArrowRight={addMonth => addMonth()}
-        // Disable left arrow. Default = false
-        disableArrowLeft={true}
-        // Disable right arrow. Default = false
-        disableArrowRight={true}
-        // Disable all touch events for disabled days. can be override with disableTouchEvent in markedDates
-        disableAllTouchEventsForDisabledDays={true}
-        // Replace default month and year title with custom one. the function receive a date as parameter
-        //renderHeader={date => {
-        /*Return JSX*/
-        //}}
-        // Enable the option to swipe between months. Default = false
-        enableSwipeMonths={true}
       />
-    </View>
+    </SafeAreaView>
   )
 }
+
+const styles = StyleSheet.create({
+  summaryChip: { marginHorizontal: 3, marginVertical: 2 },
+})
 
 export default OverviewScreen

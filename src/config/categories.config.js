@@ -1,4 +1,16 @@
 const categoryMap = {
+  misc: {
+    icon: 'currency-php',
+    label: 'Miscellaneous',
+    style: {
+      borderColor: 'violet',
+      borderWidth: 2,
+      borderRadius: 9,
+    },
+    textStyle: {
+      color: 'violet',
+    },
+  },
   transpo: {
     icon: 'bus',
     label: 'Transportation',
@@ -201,18 +213,6 @@ const categoryMap = {
     },
     textStyle: {
       color: 'indianred',
-    },
-  },
-  misc: {
-    icon: 'currency-php',
-    label: 'Miscellaneous',
-    style: {
-      borderColor: 'violet',
-      borderWidth: 2,
-      borderRadius: 9,
-    },
-    textStyle: {
-      color: 'violet',
     },
   },
 }

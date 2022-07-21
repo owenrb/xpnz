@@ -14,6 +14,7 @@ import moment from 'moment'
 import { currencyFormat } from '../utils/tools'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { Avatar } from 'react-native-paper'
+import { color } from '@rneui/base'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 
@@ -57,8 +58,8 @@ export default TransactionItem = ({ item, index, handleDelete }) => {
           textStyle={textStyle}>
           <Text style={textStyle}>{label}</Text>
         </Chip>
-        <View style={{ width: '35%' }}>
-          <Text>{description}</Text>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.description}>{description}</Text>
         </View>
         <View style={styles.amountColumn}>
           <View style={styles.currencyContainer}>
@@ -105,5 +106,14 @@ const styles = StyleSheet.create({
     margin: 3,
     borderRadius: 5,
     paddingLeft: 2,
+  },
+  descriptionContainer: {
+    width: '35%',
+    justifyContent: 'center',
+    marginHorizontal: 5,
+  },
+  description: {
+    fontStyle: 'italic',
+    color: 'darkgray',
   },
 })
