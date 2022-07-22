@@ -15,10 +15,11 @@ const OverviewScreen = () => {
   const [total, setTotal] = useState(0.0)
 
   const printPerc = value => {
-    const perc = (value / max) * 30 + 65
+    const perc = (value / max) * 33 + 65
+    const norm = perc > 98.0 ? 98 : perc
 
     // return perc + '%'
-    return perc.toFixed(2) + '%'
+    return norm.toFixed(2) + '%'
   }
 
   const printPiePerc = value => {

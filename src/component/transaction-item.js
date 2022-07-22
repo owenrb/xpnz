@@ -18,7 +18,12 @@ import { color } from '@rneui/base'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 
-export default TransactionItem = ({ item, index, handleDelete }) => {
+export default TransactionItem = ({
+  item,
+  index,
+  handleEdit,
+  handleDelete,
+}) => {
   const { amount, category, date, description, income } = item
 
   if (category === DATE_DIVIDER) {
@@ -34,6 +39,16 @@ export default TransactionItem = ({ item, index, handleDelete }) => {
   //console.log({ item })
 
   const leftSwipe = (progress, dragX) => {
+    return (
+      <TouchableOpacity onPress={handleEdit} activeOpacity={0.6}>
+        <View style={styles.editBox}>
+          <Avatar.Icon size={32} color="white" icon="pencil-outline" />
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
+  const rightSwipe = (progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [0, 100],
       outputRange: [0, 1],
@@ -50,7 +65,7 @@ export default TransactionItem = ({ item, index, handleDelete }) => {
 
   // <Text>{moment().format('DD (ddd)')}</Text>
   return (
-    <Swipeable renderLeftActions={leftSwipe}>
+    <Swipeable renderLeftActions={leftSwipe} renderRightActions={rightSwipe}>
       <View style={styles.contentContainer}>
         <Chip
           icon={icon}
@@ -98,6 +113,14 @@ const styles = StyleSheet.create({
     padding: 3,
     marginTop: 3,
     marginBottom: 1,
+  },
+  editBox: {
+    backgroundColor: 'orange',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 3,
+    borderRadius: 5,
+    paddingLeft: 2,
   },
   deleteBox: {
     backgroundColor: 'red',

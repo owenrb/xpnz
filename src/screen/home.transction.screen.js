@@ -40,9 +40,7 @@ const Headline = ({ income, expense }) => {
   )
 }
 
-const TransactionScreen = txnScreen => {
-  console.log({ txnScreen })
-
+const TransactionScreen = ({ navigation }) => {
   const dispatch = useDispatch()
   const journal = useSelector(state => state.journal)
 
@@ -94,6 +92,10 @@ const TransactionScreen = txnScreen => {
     setEntries(arr)
   }, [journal])
 
+  const editItem = item => {
+    navigation.navigate('Input')
+  }
+
   const deleteItem = async item => {
     const { id, date } = item
 
@@ -110,6 +112,7 @@ const TransactionScreen = txnScreen => {
             <TransactionItem
               item={item}
               index={index}
+              handleEdit={() => editItem(item)}
               handleDelete={() => deleteItem(item)}
             />
           )
