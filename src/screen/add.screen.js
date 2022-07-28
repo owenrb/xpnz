@@ -26,8 +26,9 @@ import { addEntry } from '../store/actions'
 import DropDown from 'react-native-paper-dropdown'
 import { monthList } from '../config/repeat.config'
 
-const InputScreen = props => {
-  const { navigation } = props
+const InputScreen = ({ navigation, route }) => {
+  console.log({ route })
+  const { id } = route.params
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
 
@@ -114,6 +115,7 @@ const InputScreen = props => {
             errors,
           }) => (
             <>
+              <Text>{id || 'none!'}</Text>
               <View style={styles.row}>
                 <Text style={styles.text}>
                   {values.income === 'true' ? 'Income' : 'Expense'}

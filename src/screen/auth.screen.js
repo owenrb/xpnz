@@ -7,7 +7,8 @@ import { Input, Button } from '@rneui/base'
 import { loginUser, getEntries } from '../store/actions/index'
 import { showToast } from '../utils/tools'
 
-const AuthScreen = () => {
+const AuthScreen = props => {
+  console.log({ props })
   const dispatch = useDispatch()
   const error = useSelector(state => state.auth.error)
   const [secureEntry, setSecureEntry] = useState(true)

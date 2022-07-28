@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import TransactionItem from '../component/transaction-item'
+import { TransactionRow, TransactionItem } from '../component/transaction-item'
 import {
   DATE_FORMAT,
   DATE_FORMAT_SHORT,
@@ -93,7 +93,7 @@ const TransactionScreen = ({ navigation }) => {
   }, [journal])
 
   const editItem = item => {
-    navigation.navigate('Input')
+    navigation.navigate('Input', item)
   }
 
   const deleteItem = async item => {
@@ -108,13 +108,16 @@ const TransactionScreen = ({ navigation }) => {
       <FlatList
         data={entries}
         renderItem={({ item, index }) => {
+          const { category } = item
+
+          if (category === DATE_DIVIDER)
+            return <TransactionItem item={item} index={index} />
           return (
-            <TransactionItem
-              item={item}
-              index={index}
+            <TransactionRow
               handleEdit={() => editItem(item)}
-              handleDelete={() => deleteItem(item)}
-            />
+              handleDelete={() => deleteItem(item)}>
+              <TransactionItem item={item} index={index} />
+            </TransactionRow>
           )
         }}
       />

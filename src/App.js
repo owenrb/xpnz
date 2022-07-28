@@ -89,6 +89,7 @@ function App(props) {
               name="Input"
               label="+"
               component={InputScreen}
+              initialParams={{}}
               options={{
                 tabBarIcon: ({ color, size }) => (
                   <MaterialCommunityIcons

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
-import { Chip } from 'react-native-paper'
 import { categoryMap } from '../config/categories.config'
-import { currencyFormat } from '../utils/tools'
-import { PESO_SYMBOL } from '../config/constants'
+import SummaryItem from '../component/summary-item'
 
 const OverviewScreen = () => {
   const dispatch = useDispatch()
@@ -13,29 +11,17 @@ const OverviewScreen = () => {
   const [entries, setEntries] = useState([])
   const [max, setMax] = useState(0.0)
   const [total, setTotal] = useState(0.0)
-
-  const printPerc = value => {
-    const perc = (value / max) * 33 + 65
-    const norm = perc > 98.0 ? 98 : perc
-
-    // return perc + '%'
-    return norm.toFixed(2) + '%'
-  }
-
-  const printPiePerc = value => {
-    const perc = (value / total) * 100
-
-    // return perc + '%'
-    return perc.toFixed(1) + '%'
-  }
+  const [detailMap, setDetailMap] = useState({})
 
   useEffect(() => {
     const map = new Object()
+    const mapDetail = new Object()
+
     let maxVal = 0.0
     let totalVal = 0.0
 
     journal.entries.forEach(item => {
-      const { category, amount, income } = item
+      const { category, amount, income, date, description } = item
       const value = parseFloat(amount)
 
       if (income !== 'false') return
@@ -47,6 +33,12 @@ const OverviewScreen = () => {
         map[category] += value
       } else {
         map[category] = value
+      }
+
+      if (category in mapDetail) {
+        mapDetail[category].push({ date, description, value })
+      } else {
+        mapDetail[category] = [{ date, description, value }]
       }
     })
 
@@ -61,11 +53,12 @@ const OverviewScreen = () => {
       .sort((a, b) => b.amount - a.amount)
 
     setEntries(summary)
+    setDetailMap(mapDetail)
   }, [journal])
 
   return (
     <SafeAreaView>
-      <Text style={styles.summaryChip}>Monthly Expense Summary</Text>
+      <Text style={styles.summaryChip}> Monthly Expense Summary</Text>
 
       <FlatList
         data={entries}
@@ -73,20 +66,16 @@ const OverviewScreen = () => {
           const { category, amount } = item
           const { icon, textStyle, style, label } = categoryMap[category]
           return (
-            <Chip
+            <SummaryItem
               icon={icon}
-              mode="outlined"
-              style={{
-                ...style,
-                ...styles.summaryChip,
-                width: printPerc(amount),
-              }}
-              textStyle={textStyle}>
-              <Text style={textStyle}>
-                {label}: {currencyFormat(amount, PESO_SYMBOL)} (
-                {printPiePerc(amount)})
-              </Text>
-            </Chip>
+              iconColor={style.borderColor}
+              progressColor={textStyle.color}
+              label={label}
+              amount={amount}
+              total={total}
+              max={max}
+              details={detailMap[category]}
+            />
           )
         }}
       />

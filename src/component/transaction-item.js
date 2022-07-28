@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Component } from 'react'
 import {
   StyleSheet,
   Text,
@@ -9,38 +9,19 @@ import {
 } from 'react-native'
 import { categoryMap } from '../config/categories.config'
 import { Chip } from 'react-native-paper'
-import { DATE_FORMAT, DATE_DIVIDER } from '../config/constants'
+import { DATE_FORMAT, DATE_DIVIDER, PESO_SYMBOL } from '../config/constants'
 import moment from 'moment'
 import { currencyFormat } from '../utils/tools'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { Avatar } from 'react-native-paper'
-import { color } from '@rneui/base'
+import { RectButton } from 'react-native-gesture-handler'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 
-export default TransactionItem = ({
-  item,
-  index,
-  handleEdit,
-  handleDelete,
-}) => {
-  const { amount, category, date, description, income } = item
-
-  if (category === DATE_DIVIDER) {
+export class TransactionRow extends Component {
+  leftSwipe = (progress, dragX) => {
     return (
-      <View style={styles.dateDivider}>
-        <Text>{date}</Text>
-      </View>
-    )
-  }
-
-  const parsed = moment(date, DATE_FORMAT)
-  const { icon, textStyle, style, label } = categoryMap[category]
-  //console.log({ item })
-
-  const leftSwipe = (progress, dragX) => {
-    return (
-      <TouchableOpacity onPress={handleEdit} activeOpacity={0.6}>
+      <TouchableOpacity onPress={this.props.handleEdit} activeOpacity={0.6}>
         <View style={styles.editBox}>
           <Avatar.Icon size={32} color="white" icon="pencil-outline" />
         </View>
@@ -48,14 +29,9 @@ export default TransactionItem = ({
     )
   }
 
-  const rightSwipe = (progress, dragX) => {
-    const scale = dragX.interpolate({
-      inputRange: [0, 100],
-      outputRange: [0, 1],
-      extrapolate: 'clamp',
-    })
+  rightSwipe = (progress, dragX) => {
     return (
-      <TouchableOpacity onPress={handleDelete} activeOpacity={0.6}>
+      <TouchableOpacity onPress={this.props.handleDelete} activeOpacity={0.6}>
         <View style={styles.deleteBox}>
           <Avatar.Icon size={32} color="white" icon="trash-can-outline" />
         </View>
@@ -63,26 +39,78 @@ export default TransactionItem = ({
     )
   }
 
+  updateRef = ref => {
+    this._swipeableRow = ref
+  }
+  close = () => {
+    setTimeout(() => {
+      if (this && this._swipeableRow) this._swipeableRow.close()
+    }, 2000)
+  }
+
+  render() {
+    const { children } = this.props
+    return (
+      <Swipeable
+        ref={this.updateRef}
+        renderLeftActions={this.leftSwipe}
+        renderRightActions={this.rightSwipe}
+        onSwipeableWillOpen={this.close}>
+        {children}
+      </Swipeable>
+    )
+  }
+}
+
+export const TransactionItem = ({ item, index, handleEdit, handleDelete }) => {
+  const { amount, category, date, description, income } = item
+
+  const newStyle = true
+
+  if (category === DATE_DIVIDER) {
+    return (
+      <View style={styles.dateDivider}>
+        <Text style={styles.dateText}>{date}</Text>
+      </View>
+    )
+  }
+
+  const parsed = moment(date, DATE_FORMAT)
+  const { icon, textStyle, style, label } = categoryMap[category]
+
+  if (newStyle)
+    return (
+      <RectButton style={styles.rectButton}>
+        <Text style={styles.fromText}>{label}</Text>
+        <Text numberOfLines={1} style={styles.messageText}>
+          {description}
+        </Text>
+        <Text style={styles.amountText}>
+          {currencyFormat(amount, PESO_SYMBOL)}
+        </Text>
+      </RectButton>
+    )
+
+  //console.log({ item })
+
   // <Text>{moment().format('DD (ddd)')}</Text>
   return (
-    <Swipeable renderLeftActions={leftSwipe} renderRightActions={rightSwipe}>
-      <View style={styles.contentContainer}>
-        <Chip
-          icon={icon}
-          style={{ ...style, width: '40%' }}
-          textStyle={textStyle}>
-          <Text style={textStyle}>{label}</Text>
-        </Chip>
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.description}>{description}</Text>
-        </View>
-        <View style={styles.amountColumn}>
-          <View style={styles.currencyContainer}>
-            <Text style={styles.amount}>{currencyFormat(amount)}</Text>
-          </View>
+    <View style={styles.contentContainer}>
+      <Chip
+        icon={icon}
+        style={{ ...style, width: '40%' }}
+        textStyle={textStyle}>
+        <Text style={textStyle}>{label}</Text>
+      </Chip>
+      <View style={styles.descriptionContainer}>
+        <Text style={styles.description}>{description}</Text>
+      </View>
+      <View style={styles.amountColumn}>
+        <View style={styles.currencyContainer}>
+          <Text style={styles.amount}>{currencyFormat(amount)}</Text>
         </View>
       </View>
-    </Swipeable>
+    </View>
   )
 }
 
@@ -109,10 +137,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   dateDivider: {
-    backgroundColor: 'lightgray',
-    padding: 3,
-    marginTop: 3,
-    marginBottom: 1,
+    backgroundColor: 'white',
+    paddingTop: 8,
+    //marginTop: 3,
+    marginBottom: 2,
   },
   editBox: {
     backgroundColor: 'orange',
@@ -138,5 +166,40 @@ const styles = StyleSheet.create({
   description: {
     fontStyle: 'italic',
     color: 'darkgray',
+  },
+
+  rectButton: {
+    flex: 1,
+    height: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    justifyContent: 'space-between',
+    flexDirection: 'column',
+    backgroundColor: 'white',
+  },
+  separator: {
+    backgroundColor: 'rgb(200, 199, 204)',
+    height: StyleSheet.hairlineWidth,
+  },
+  fromText: {
+    fontWeight: 'bold',
+    backgroundColor: 'transparent',
+  },
+  messageText: {
+    color: '#999',
+    backgroundColor: 'transparent',
+  },
+  dateText: {
+    color: '#777',
+    fontWeight: 'bold',
+    paddingLeft: 5,
+  },
+  amountText: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    color: '#999',
+    fontWeight: 'bold',
   },
 })
