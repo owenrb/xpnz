@@ -11,6 +11,7 @@ import {
 } from '../config/constants'
 import { currencyFormat } from '../utils/tools'
 import { deleteEntry } from '../store/actions'
+import EditItemModal from '../component/editItemModal'
 
 const Headline = ({ income, expense }) => {
   const savings = income - expense
@@ -92,15 +93,21 @@ const TransactionScreen = ({ navigation }) => {
     setEntries(arr)
   }, [journal])
 
-  const editItem = item => {
-    navigation.navigate('Input', item)
-  }
-
   const deleteItem = async item => {
     const { id, date } = item
 
     dispatch(await deleteEntry(id, moment(date, DATE_FORMAT).toDate()))
   }
+
+  // start: editing module
+  const [visible, setVisible] = React.useState(false)
+  const [selectedItem, setSelectedItem] = React.useState({})
+  const hideModal = () => setVisible(false)
+  const editItem = item => {
+    setSelectedItem(item)
+    setVisible(true)
+  }
+  // end: editing module
 
   return (
     <SafeAreaView>
@@ -120,6 +127,11 @@ const TransactionScreen = ({ navigation }) => {
             </TransactionRow>
           )
         }}
+      />
+      <EditItemModal
+        visible={visible}
+        hideModal={hideModal}
+        selectedItem={selectedItem}
       />
     </SafeAreaView>
   )

@@ -115,7 +115,6 @@ const InputScreen = ({ navigation, route }) => {
             errors,
           }) => (
             <>
-              <Text>{id || 'none!'}</Text>
               <View style={styles.row}>
                 <Text style={styles.text}>
                   {values.income === 'true' ? 'Income' : 'Expense'}

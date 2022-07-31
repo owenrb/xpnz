@@ -65,8 +65,6 @@ export class TransactionRow extends Component {
 export const TransactionItem = ({ item, index, handleEdit, handleDelete }) => {
   const { amount, category, date, description, income } = item
 
-  const newStyle = true
-
   if (category === DATE_DIVIDER) {
     return (
       <View style={styles.dateDivider}>
@@ -75,42 +73,18 @@ export const TransactionItem = ({ item, index, handleEdit, handleDelete }) => {
     )
   }
 
-  const parsed = moment(date, DATE_FORMAT)
-  const { icon, textStyle, style, label } = categoryMap[category]
+  const { label } = categoryMap[category]
 
-  if (newStyle)
-    return (
-      <RectButton style={styles.rectButton}>
-        <Text style={styles.fromText}>{label}</Text>
-        <Text numberOfLines={1} style={styles.messageText}>
-          {description}
-        </Text>
-        <Text style={styles.amountText}>
-          {currencyFormat(amount, PESO_SYMBOL)}
-        </Text>
-      </RectButton>
-    )
-
-  //console.log({ item })
-
-  // <Text>{moment().format('DD (ddd)')}</Text>
   return (
-    <View style={styles.contentContainer}>
-      <Chip
-        icon={icon}
-        style={{ ...style, width: '40%' }}
-        textStyle={textStyle}>
-        <Text style={textStyle}>{label}</Text>
-      </Chip>
-      <View style={styles.descriptionContainer}>
-        <Text style={styles.description}>{description}</Text>
-      </View>
-      <View style={styles.amountColumn}>
-        <View style={styles.currencyContainer}>
-          <Text style={styles.amount}>{currencyFormat(amount)}</Text>
-        </View>
-      </View>
-    </View>
+    <RectButton style={styles.rectButton}>
+      <Text style={styles.fromText}>{label}</Text>
+      <Text numberOfLines={1} style={styles.messageText}>
+        {description}
+      </Text>
+      <Text style={styles.amountText}>
+        {currencyFormat(amount, PESO_SYMBOL)}
+      </Text>
+    </RectButton>
   )
 }
 
