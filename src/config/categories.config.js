@@ -221,5 +221,12 @@ const keys = Object.keys(categoryMap)
 const categoryArray = keys.map(key => {
   return { key, ...categoryMap[key] }
 })
+const comboArray = keys.map(key => {
+  return {
+    value: key,
+    label: categoryMap[key].label,
+    labelStyle: categoryMap[key].textStyle,
+  }
+})
 
-export { categoryMap, categoryArray }
+export { categoryMap, categoryArray, comboArray }

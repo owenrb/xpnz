@@ -1,143 +1,245 @@
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Modal, Portal, Text, Chip, Button } from 'react-native-paper'
 import {
-  categoryMap,
-  categoryArray as dataSource,
-} from '../config/categories.config'
+  Modal,
+  Portal,
+  Text,
+  Button,
+  Checkbox,
+  DefaultTheme,
+  Provider,
+} from 'react-native-paper'
+import { categoryMap, comboArray } from '../config/categories.config'
 import { Formik } from 'formik'
 import moment from 'moment'
 import * as Yup from 'yup'
 import { Switch } from '@rneui/themed'
 import DatePicker from 'react-native-date-picker'
-import { Calculator } from 'react-native-calculator'
 import { Input } from '@rneui/base'
+import DropDownPicker from 'react-native-dropdown-picker'
+import { useDispatch } from 'react-redux'
+import { editEntry } from '../store/actions'
 
 const EditItemModal = ({ visible, hideModal, selectedItem }) => {
   console.log({ selectedItem })
+  const dispatch = useDispatch()
+
   const { category } = selectedItem
   const tag = categoryMap[category || 'misc']
 
   const [open, setOpen] = useState(false)
+  const [split, setSplit] = useState(false)
+
+  const [open1, setOpen1] = useState(false)
+  const [value1, setValue1] = useState(category || 'misc')
+  const [open2, setOpen2] = useState(false)
+  const [value2, setValue2] = useState(category || 'misc')
+
+  const handleSubmit = async (id, values) => {
+    console.log({ id, values })
+    dispatch(await editEntry(id, values))
+    hideModal()
+  }
 
   return (
     <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={hideModal}
-        contentContainerStyle={styles.containerStyle}>
-        <Formik
-          initialValues={{
-            income: selectedItem.income,
-            date: selectedItem.date,
-            description: selectedItem.description,
-            category: selectedItem.category,
-            amount: selectedItem.amount,
-            repeat: '0',
-          }}
-          validationSchema={Yup.object({
-            income: Yup.boolean(),
-            date: Yup.string().required('Date is required'),
-            description: Yup.string(),
-            category: Yup.string().required('Category is required'),
-            amount: Yup.number().required().moreThan(0, 'Please entery amount'),
-            repeat: Yup.number().required(),
-          })}
-          onSubmit={(values, formikBag) => {
-            handleSubmit(values)
+      <Provider theme={DefaultTheme}>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={styles.containerStyle}>
+          <Formik
+            initialValues={{
+              income: selectedItem.income,
+              date: selectedItem.date,
+              description: selectedItem.description,
+              category: selectedItem.category,
+              amount: selectedItem.amount,
+              split: 'false',
+              category2: '',
+              description2: '',
+              amount2: '0.00',
+            }}
+            validationSchema={Yup.object({
+              income: Yup.boolean(),
+              date: Yup.string().required('Date is required'),
+              description: Yup.string(),
+              category: Yup.string().required('Category is required'),
+              amount: Yup.number()
+                .required()
+                .moreThan(0, 'Please entery amount'),
+              split: Yup.boolean(),
+              category2: Yup.string(),
+              description2: Yup.string(),
+              amount2: Yup.number(),
+            })}
+            onSubmit={(values, formikBag) => {
+              handleSubmit(selectedItem.id, values)
 
-            const { resetForm } = formikBag
-            resetForm()
-          }}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            isValid,
-            values,
-            touched,
-            errors,
-          }) => (
-            <>
-              <Chip
-                mode="outlined"
-                icon={tag.icon}
-                style={tag.style}
-                textStyle={tag.textStyle}>
-                {tag.label}
-              </Chip>
-              <View style={styles.row}>
-                <Text style={styles.text}>
-                  {values.income === 'true' ? 'Income' : 'Expense'}
-                </Text>
-                <Switch
-                  onValueChange={value =>
-                    handleChange('income')(value ? 'true' : 'false')
-                  }
-                  value={values.income === 'true'}
+              const { resetForm } = formikBag
+              resetForm()
+              setSplit(false)
+            }}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isValid,
+              values,
+              touched,
+              errors,
+            }) => (
+              <>
+                <DropDownPicker
+                  items={comboArray}
+                  open={open1}
+                  value={value1}
+                  setOpen={setOpen1}
+                  setValue={setValue1}
+                  onChangeValue={handleChange('category')}
                 />
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.text}>Date</Text>
-                <Button style={styles.text} onPress={() => setOpen(true)}>
-                  {moment(values.date, 'YYYY-MM-DD').toDate().toDateString()}
-                </Button>
-                <DatePicker
-                  modal
-                  mode="date"
-                  open={open}
-                  date={moment(values.date, 'YYYY-MM-DD').toDate()}
-                  onConfirm={date => {
-                    setOpen(false)
-                    handleChange('date')(moment(date).format('YYYY-MM-DD'))
+                <View style={styles.row}>
+                  <Text style={styles.text}>
+                    {values.income === 'true' ? 'Income' : 'Expense'}
+                  </Text>
+                  <Switch
+                    onValueChange={value =>
+                      handleChange('income')(value ? 'true' : 'false')
+                    }
+                    value={values.income === 'true'}
+                  />
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.text}>Date</Text>
+                  <Button style={styles.text} onPress={() => setOpen(true)}>
+                    {moment(values.date, 'YYYY-MM-DD').toDate().toDateString()}
+                  </Button>
+                  <DatePicker
+                    modal
+                    mode="date"
+                    open={open}
+                    date={moment(values.date, 'YYYY-MM-DD').toDate()}
+                    onConfirm={date => {
+                      setOpen(false)
+                      handleChange('date')(moment(date).format('YYYY-MM-DD'))
+                    }}
+                    onCancel={() => {
+                      setOpen(false)
+                    }}
+                  />
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.text}>Description</Text>
+                  <Input
+                    placeholder="Description"
+                    onChangeText={handleChange('description')}
+                    onBlur={handleBlur('description')}
+                    value={values.description}
+                  />
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.text}>Amount</Text>
+                  <Input
+                    placeholder="0.00"
+                    rightIcon={{
+                      type: 'antdesign',
+                      name: 'calculator',
+                      color: split ? 'gray' : 'magenta',
+                    }}
+                    onChangeText={handleChange('amount')}
+                    onBlur={handleBlur('amount')}
+                    value={values.amount}
+                    errorMessage={errors.amount}
+                    disabled={split}
+                  />
+                </View>
+                <Checkbox.Item
+                  label="Split"
+                  status={split ? 'checked' : 'unchecked'}
+                  onPress={() => {
+                    handleChange('split')(split ? 'false' : 'true')
+                    setSplit(!split)
                   }}
-                  onCancel={() => {
-                    setOpen(false)
-                  }}
+                  mode="android"
+                  color="magenta"
                 />
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.text}>Description</Text>
+                <DropDownPicker
+                  items={comboArray}
+                  open={open2}
+                  value={value2}
+                  setOpen={setOpen2}
+                  setValue={setValue2}
+                  disabled={!split}
+                  style={{
+                    backgroundColor: split ? 'white' : 'pink',
+                  }}
+                  labelStyle={{ color: split ? 'black' : 'grey' }}
+                  onChangeValue={handleChange('category2')}
+                />
                 <Input
                   placeholder="Description"
-                  onChangeText={handleChange('description')}
-                  onBlur={handleBlur('description')}
-                  value={values.description}
+                  onChangeText={handleChange('description2')}
+                  onBlur={handleBlur('description2')}
+                  value={values.description2}
+                  disabled={!split}
                 />
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.text}>Amount</Text>
                 <Input
-                  placeholder="0.00"
+                  placeholder="Amount"
                   rightIcon={{
                     type: 'antdesign',
                     name: 'calculator',
+                    color: split ? 'magenta' : 'gray',
                   }}
-                  onChangeText={handleChange('amount')}
-                  onBlur={handleBlur('amount')}
-                  value={values.amount}
-                  errorMessage={errors.amount}
+                  onChangeText={value => {
+                    handleChange('amount2')(value)
+
+                    try {
+                      const v = parseFloat(value)
+                      const s = selectedItem.amount - v
+                      if (s > 0.0) {
+                        handleChange('amount')(s + '')
+                      }
+                    } catch (err) {
+                      handleChange('amount')(selectedItem.amount + '')
+                      console.log({ err })
+                    }
+                  }}
+                  onBlur={handleBlur('amount2')}
+                  value={values.amount2}
+                  errorMessage={errors.amount2}
+                  disabled={!split}
                 />
-              </View>
-            </>
-          )}
-        </Formik>
-      </Modal>
+                <Button
+                  mode="contained"
+                  onPress={x => handleSubmit(x)}
+                  disabled={
+                    split &&
+                    (parseFloat(values.amount2) == 0.0 ||
+                      parseFloat(values.amount) + parseFloat(values.amount2) !=
+                        selectedItem.amount)
+                  }>
+                  Update
+                </Button>
+              </>
+            )}
+          </Formik>
+        </Modal>
+      </Provider>
     </Portal>
   )
 }
 
 const styles = StyleSheet.create({
   containerStyle: {
-    backgroundColor: 'white',
+    backgroundColor: 'pink',
     marginHorizontal: 25,
     marginVertical: 65,
-    padding: 50,
+    padding: 20,
     flex: 1,
   },
   container: {
     flex: 1,
-    padding: 30,
+    //padding: 15,
     alignItems: 'flex-start',
   },
   row: {
@@ -153,6 +255,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingHorizontal: 8,
   },
+  dropdown: { height: 50, width: '100%', backgroundColor: 'white' },
 })
 
 export default EditItemModal

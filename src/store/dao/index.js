@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import moment from 'moment'
 import uuid from 'react-uuid'
+import { DATE_FORMAT, DATE_FORMAT_KEY } from '../../config/constants'
 
 /**
  *
@@ -9,8 +10,8 @@ import uuid from 'react-uuid'
  */
 const createJournal = async data => {
   const { date } = data
-  const parsed = moment(date, 'YYYY-MM-DD')
-  const label = '@journal-' + parsed.format('YYYY-MM')
+  const parsed = moment(date, DATE_FORMAT)
+  const label = '@journal-' + parsed.format(DATE_FORMAT_KEY)
 
   const value =
     (await AsyncStorage.getItem(label)) || JSON.stringify({ entries: [] })

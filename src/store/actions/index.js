@@ -3,11 +3,11 @@ import moment from 'moment'
 import { addMonths, monthDiff } from '../../utils/date'
 import { DATE_FORMAT, DATE_FORMAT_KEY } from '../../config/constants'
 
-export const loginUser = value => ({
+export const loginUser = ({ password }) => ({
   type: 'auth/loginUser',
   // always success this time
   payload: {
-    isAuth: true,
+    isAuth: moment().format('YYYY') === password,
   },
 })
 
@@ -65,6 +65,50 @@ export const deleteEntry = async (id, date) => {
   const label = '@journal-' + moment(date).format(DATE_FORMAT_KEY)
 
   const payload = await removeJournal(label, id)
+
+  return {
+    type: 'journal/entry',
+    payload,
+  }
+}
+
+export const editEntry = async (id, values) => {
+  const {
+    date,
+    income,
+    category,
+    description,
+    amount,
+    split,
+    category2,
+    description2,
+    amount2,
+  } = values
+  const trueDate = moment(date, DATE_FORMAT).toDate()
+
+  // delete
+  await deleteEntry(id, trueDate)
+
+  // create split
+  if (split === 'true') {
+    await createJournal({
+      date,
+      income,
+      category: category2,
+      description: description2,
+      amount: amount2,
+    })
+  }
+
+  const payload = await createJournal({
+    date,
+    income,
+    category,
+    description,
+    amount,
+  })
+
+  console.log({ addEntry: payload })
 
   return {
     type: 'journal/entry',

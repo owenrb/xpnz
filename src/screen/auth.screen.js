@@ -33,16 +33,10 @@ const AuthScreen = props => {
       <View style={styles.container}>
         <Formik
           initialValues={{
-            email: 'owenrbee@gmail.com',
-            password: 's3cr3t',
+            password: '',
           }}
           validationSchema={Yup.object({
-            email: Yup.string()
-              .email('Invalid email address')
-              .required('The email is required'),
-            password: Yup.string()
-              .required('The password is required')
-              .max(10, 'Must be 10 characters or less'),
+            password: Yup.string().required('The password is required'),
           })}
           onSubmit={values => handleSubmit(values)}>
           {({
@@ -55,20 +49,7 @@ const AuthScreen = props => {
           }) => (
             <>
               <Input
-                placeholder="Email"
-                leftIcon={{ type: 'antdesign', name: 'mail', color: 'white' }}
-                inputStyles={styles.inputStyle}
-                placeholderTextColor={'grey'}
-                inputContainerStyle={styles.inputContainerStyle}
-                renderErrorMessage={errors.email && touched.email}
-                errorMessage={errors.email}
-                errorStyle={{ color: 'black' }}
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-              />
-              <Input
-                placeholder="Password"
+                placeholder="Passcode"
                 secureTextEntry={secureEntry}
                 leftIcon={{ type: 'antdesign', name: 'lock', color: 'white' }}
                 rightIcon={{
@@ -109,6 +90,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'pink',
   },
   container: {
+    marginTop: 250,
     padding: 50,
     alignItems: 'center',
   },

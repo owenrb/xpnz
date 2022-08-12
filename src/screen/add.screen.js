@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, ScrollView, View } from 'react-native'
-import { Form, Formik } from 'formik'
+import React, { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { Formik } from 'formik'
 import * as Yup from 'yup'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Input } from '@rneui/base'
 import { Switch, Text } from '@rneui/themed'
 import DatePicker from 'react-native-date-picker'
@@ -11,11 +11,8 @@ import {
   Modal,
   Portal,
   Chip,
-  DarkTheme,
   DefaultTheme,
   Provider,
-  Surface,
-  ThemeProvider,
   Button,
 } from 'react-native-paper'
 import CategoryModal from '../component/categoryModal'
