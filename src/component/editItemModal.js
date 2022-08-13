@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import {
   Modal,
@@ -21,7 +21,7 @@ import { useDispatch } from 'react-redux'
 import { editEntry } from '../store/actions'
 
 const EditItemModal = ({ visible, hideModal, selectedItem }) => {
-  console.log({ selectedItem })
+  //console.log({ selectedItem })
   const dispatch = useDispatch()
 
   const { category } = selectedItem
@@ -31,9 +31,14 @@ const EditItemModal = ({ visible, hideModal, selectedItem }) => {
   const [split, setSplit] = useState(false)
 
   const [open1, setOpen1] = useState(false)
-  const [value1, setValue1] = useState(category || 'misc')
+  const [value1, setValue1] = useState('misc')
   const [open2, setOpen2] = useState(false)
-  const [value2, setValue2] = useState(category || 'misc')
+  const [value2, setValue2] = useState('misc')
+
+  useEffect(() => {
+    setValue1(category || 'misc')
+    setValue2(category || 'misc')
+  }, [selectedItem.id || ''])
 
   const handleSubmit = async (id, values) => {
     console.log({ id, values })
@@ -97,6 +102,7 @@ const EditItemModal = ({ visible, hideModal, selectedItem }) => {
                   setOpen={setOpen1}
                   setValue={setValue1}
                   onChangeValue={handleChange('category')}
+                  style={styles.dropdown}
                 />
                 <View style={styles.row}>
                   <Text style={styles.text}>
@@ -171,6 +177,7 @@ const EditItemModal = ({ visible, hideModal, selectedItem }) => {
                   setValue={setValue2}
                   disabled={!split}
                   style={{
+                    ...styles.dropdown,
                     backgroundColor: split ? 'white' : 'pink',
                   }}
                   labelStyle={{ color: split ? 'black' : 'grey' }}
@@ -255,7 +262,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingHorizontal: 8,
   },
-  dropdown: { height: 50, width: '100%', backgroundColor: 'white' },
+  dropdown: { marginBottom: 10 },
 })
 
 export default EditItemModal
