@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Keyboard } from 'react-native'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
@@ -22,6 +22,7 @@ import { categoryMap } from '../config/categories.config'
 import { addEntry } from '../store/actions'
 import DropDown from 'react-native-paper-dropdown'
 import { monthList } from '../config/repeat.config'
+import { DATE_FORMAT } from '../config/constants'
 
 const InputScreen = ({ navigation, route }) => {
   console.log({ route })
@@ -50,6 +51,7 @@ const InputScreen = ({ navigation, route }) => {
     label: 'Transportation',
   })
   const showModal = () => {
+    Keyboard.dismiss()
     fetchData()
     setVisible(true)
   }
@@ -57,7 +59,10 @@ const InputScreen = ({ navigation, route }) => {
 
   // calculator
   const [visibleCalc, setVisibleCalc] = useState(false)
-  const showModalCalc = () => setVisibleCalc(true)
+  const showModalCalc = () => {
+    Keyboard.dismiss()
+    setVisibleCalc(true)
+  }
   const hideModalCalc = () => setVisibleCalc(false)
 
   // category
@@ -82,7 +87,7 @@ const InputScreen = ({ navigation, route }) => {
         <Formik
           initialValues={{
             income: 'false',
-            date: moment().format('YYYY-MM-DD'),
+            date: moment().format(DATE_FORMAT),
             description: '',
             category: 'misc',
             amount: '0.00',
@@ -126,16 +131,16 @@ const InputScreen = ({ navigation, route }) => {
               <View style={styles.row}>
                 <Text style={styles.text}>Date</Text>
                 <Button style={styles.text} onPress={() => setOpen(true)}>
-                  {moment(values.date, 'YYYY-MM-DD').toDate().toDateString()}
+                  {moment(values.date, DATE_FORMAT).toDate().toDateString()}
                 </Button>
                 <DatePicker
                   modal
                   mode="date"
                   open={open}
-                  date={moment(values.date, 'YYYY-MM-DD').toDate()}
+                  date={moment(values.date, DATE_FORMAT).toDate()}
                   onConfirm={date => {
                     setOpen(false)
-                    handleChange('date')(moment(date).format('YYYY-MM-DD'))
+                    handleChange('date')(moment(date).format(DATE_FORMAT))
                   }}
                   onCancel={() => {
                     setOpen(false)
@@ -189,7 +194,7 @@ const InputScreen = ({ navigation, route }) => {
                       style={{ flex: 1 }}
                       hasAcceptButton={true}
                       onAccept={(value, text) => {
-                        handleChange('amount')(text)
+                        handleChange('amount')(value + '')
                         hideModalCalc()
                       }}
                     />
