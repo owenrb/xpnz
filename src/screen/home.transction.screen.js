@@ -44,7 +44,9 @@ const Headline = ({ income, expense }) => {
 const TransactionScreen = ({ navigation }) => {
   const dispatch = useDispatch()
   const journal = useSelector(state => state.journal)
+  const setting = useSelector(state => state.setting)
 
+  //const [decending, setDecending] = useState(setting.descending)
   const [entries, setEntries] = useState([])
   const [income, setIncome] = useState(0.0)
   const [expense, setExpense] = useState(0.0)
@@ -52,6 +54,7 @@ const TransactionScreen = ({ navigation }) => {
   useEffect(() => {
     let inc = 0.0
     let exp = 0.0
+    const { descending } = setting
 
     const arr = []
       .concat(journal.entries)
@@ -59,7 +62,7 @@ const TransactionScreen = ({ navigation }) => {
       .sort((a, b) => {
         d1 = moment(a.date, DATE_FORMAT)
         d2 = moment(b.date, DATE_FORMAT)
-        return d1.isAfter(d2)
+        return descending ? d2.isAfter(d1) : d1.isAfter(d2)
       })
       // process data
       .flatMap((item, idx, list) => {
@@ -91,7 +94,7 @@ const TransactionScreen = ({ navigation }) => {
     setExpense(exp)
 
     setEntries(arr)
-  }, [journal])
+  }, [journal, setting])
 
   const deleteItem = async item => {
     const { id, date } = item

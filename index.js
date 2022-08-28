@@ -16,6 +16,7 @@ import Toast from 'react-native-toast-message'
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './src/store/slice/auth.slice'
 import journalReducer from './src/store/slice/journal.slice'
+import settingReducer from './src/store/slice/setting.slice'
 import createSagaMiddleware from 'redux-saga'
 import authSaga from './src/store/saga/auth.saga'
 
@@ -27,6 +28,7 @@ const store = configureStore({
   reducer: {
     auth: authReducer,
     journal: journalReducer,
+    setting: settingReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(sagaMiddleware),

@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     backgroundColor: 'pink',
     marginHorizontal: 25,
-    marginVertical: 65,
+    marginVertical: 55,
     padding: 20,
     flex: 1,
   },

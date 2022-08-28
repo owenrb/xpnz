@@ -11,11 +11,6 @@ export const loginUser = ({ password }) => ({
   },
 })
 
-export const addJournalEntry = value => ({
-  type: 'JOURNAL_ENTRY',
-  payload: api.addJournalEntry(values),
-})
-
 const handleRepeat = async values => {
   const { repeat, date, description } = values
 
@@ -115,3 +110,8 @@ export const editEntry = async (id, values) => {
     payload,
   }
 }
+
+export const updateSetting = values => ({
+  type: 'user/setting',
+  payload: values,
+})

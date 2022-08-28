@@ -68,7 +68,13 @@ export const TransactionItem = ({ item, index, handleEdit, handleDelete }) => {
   if (category === DATE_DIVIDER) {
     return (
       <View style={styles.dateDivider}>
-        <Text style={styles.dateText}>{date}</Text>
+        <Text
+          style={{
+            ...styles.dateText,
+            ...(date.includes('Sun') ? { color: 'red' } : {}),
+          }}>
+          {date}
+        </Text>
       </View>
     )
   }
@@ -81,7 +87,11 @@ export const TransactionItem = ({ item, index, handleEdit, handleDelete }) => {
       <Text numberOfLines={1} style={styles.messageText}>
         {description}
       </Text>
-      <Text style={styles.amountText}>
+      <Text
+        style={{
+          ...styles.amountText,
+          ...(income === 'true' ? { color: 'darkgreen' } : {}),
+        }}>
         {currencyFormat(amount, PESO_SYMBOL)}
       </Text>
     </RectButton>
