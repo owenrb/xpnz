@@ -115,3 +115,16 @@ export const updateSetting = values => ({
   type: 'user/setting',
   payload: values,
 })
+
+export const getBudget = async yyyymm => {
+  const label = '@journal-' + (yyyymm || moment().format(DATE_FORMAT_KEY))
+
+  const payload = await getJournal(label)
+
+  // TODO
+
+  return {
+    type: 'budget/status',
+    payload,
+  }
+}

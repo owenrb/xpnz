@@ -17,6 +17,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './src/store/slice/auth.slice'
 import journalReducer from './src/store/slice/journal.slice'
 import settingReducer from './src/store/slice/setting.slice'
+import budgetReducer from './src/store/slice/budget.slice'
 import createSagaMiddleware from 'redux-saga'
 import authSaga from './src/store/saga/auth.saga'
 
@@ -29,6 +30,7 @@ const store = configureStore({
     auth: authReducer,
     journal: journalReducer,
     setting: settingReducer,
+    budget: budgetReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(sagaMiddleware),
